@@ -1,0 +1,440 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <title>Тест на пам'ять — зворотні цифри</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: radial-gradient(circle at top, #00c6ff 0, #16213e 40%, #0b0b1f 100%);
+      color: #f5f6fa;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .card {
+      background: rgba(10, 10, 25, 0.9);
+      border-radius: 18px;
+      box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+      padding: 24px 26px 30px;
+      max-width: 420px;
+      width: 100%;
+      border: 1px solid rgba(0, 198, 255, 0.4);
+      backdrop-filter: blur(10px);
+    }
+
+    h1 {
+      margin: 0 0 8px;
+      font-size: 1.6rem;
+      text-align: center;
+      color: #00c6ff;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      text-align: center;
+      color: #a4b0be;
+      margin-bottom: 18px;
+    }
+
+    .name-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 14px;
+      align-items: center;
+    }
+
+    label {
+      font-size: 0.9rem;
+    }
+
+    input[type="text"] {
+      flex: 1;
+      padding: 8px 10px;
+      border-radius: 999px;
+      border: 1px solid #3d3d5c;
+      background: rgba(15, 15, 35, 0.9);
+      color: #f5f6fa;
+      outline: none;
+      font-size: 0.95rem;
+    }
+
+    input[type="text"]::placeholder {
+      color: #747d8c;
+    }
+
+    input[type="text"]:focus {
+      border-color: #00c6ff;
+      box-shadow: 0 0 0 1px rgba(0, 198, 255, 0.4);
+    }
+
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 14px;
+      background: linear-gradient(135deg, #00c6ff, #4d9fff);
+      color: #0b1020;
+      font-weight: 600;
+      font-size: 0.95rem;
+      cursor: pointer;
+      transition: transform 0.1s ease, box-shadow 0.1s ease, filter 0.1s ease;
+      white-space: nowrap;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 14px rgba(0, 198, 255, 0.3);
+      filter: brightness(1.05);
+    }
+
+    button:active {
+      transform: translateY(1px) scale(0.98);
+      box-shadow: none;
+      filter: brightness(0.95);
+    }
+
+    button.secondary {
+      background: transparent;
+      border: 1px solid #57606f;
+      color: #f5f6fa;
+      box-shadow: none;
+    }
+
+    .top-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      gap: 8px;
+    }
+
+    .progress {
+      font-size: 0.85rem;
+      color: #a4b0be;
+    }
+
+    .display {
+      margin: 16px auto 8px;
+      height: 60px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.6rem;
+      letter-spacing: 0.2em;
+      font-weight: 600;
+      color: #ffffff;
+    }
+
+    .hint {
+      font-size: 0.85rem;
+      color: #a4b0be;
+      text-align: center;
+      min-height: 18px;
+    }
+
+    .answer-row {
+      margin-top: 10px;
+      display: flex;
+      gap: 8px;
+    }
+
+    .answer-row input[type="text"] {
+      text-align: center;
+      letter-spacing: 0.3em;
+      font-size: 1.1rem;
+    }
+
+    .feedback {
+      margin-top: 8px;
+      font-size: 0.9rem;
+      text-align: center;
+      min-height: 20px;
+    }
+
+    .feedback.ok {
+      color: #2ed573;
+    }
+
+    .feedback.bad {
+      color: #ff6b81;
+    }
+
+    .result {
+      margin-top: 12px;
+      font-size: 0.95rem;
+      text-align: center;
+      color: #f1f2f6;
+      min-height: 22px;
+    }
+
+    .small-note {
+      margin-top: 10px;
+      font-size: 0.75rem;
+      color: #57606f;
+      text-align: center;
+    }
+
+    @media (max-width: 480px) {
+      .card {
+        margin: 12px;
+        padding: 18px 16px 22px;
+      }
+      h1 {
+        font-size: 1.4rem;
+      }
+      .display {
+        font-size: 2.2rem;
+      }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="card">
+    <h1>Тест на пам'ять</h1>
+    <div class="subtitle">
+      Запам’ятай 3 цифри та введи їх у зворотному порядку.<br />
+      5 рівнів × 3 спроби = 15 завдань.
+    </div>
+
+    <div class="name-row">
+      <label for="player-name">Ім’я:</label>
+      <input type="text" id="player-name" placeholder="Введіть своє ім’я" />
+      <button id="start-btn">Почати</button>
+    </div>
+
+    <div class="top-row">
+      <div class="progress" id="progress">Рівень 1 із 5 • Спроба 1 із 3</div>
+      <button id="restart-btn" class="secondary" style="display:none;">Спочатку</button>
+    </div>
+
+    <div class="display" id="display"></div>
+    <div class="hint" id="hint">Натисніть «Почати», щоб розпочати гру.</div>
+
+    <form id="answer-form">
+      <div class="answer-row" id="answer-section" style="display:none;">
+        <input
+          type="text"
+          id="answer-input"
+          maxlength="3"
+          autocomplete="off"
+          placeholder="___"
+        />
+        <button type="submit">Готово</button>
+      </div>
+    </form>
+
+    <div class="feedback" id="feedback"></div>
+    <div class="result" id="result"></div>
+    <div class="small-note">
+      Після завершення гри результат автоматично надсилається до Google Таблиці.
+    </div>
+  </div>
+
+  <script>
+    // Налаштування гри
+    const LEVELS = 5;
+    const TRIALS_PER_LEVEL = 3;
+    const DIGITS_PER_TRIAL = 3;
+
+    // Елементи DOM
+    const playerNameInput = document.getElementById("player-name");
+    const startBtn = document.getElementById("start-btn");
+    const restartBtn = document.getElementById("restart-btn");
+    const displayEl = document.getElementById("display");
+    const hintEl = document.getElementById("hint");
+    const progressEl = document.getElementById("progress");
+    const answerSection = document.getElementById("answer-section");
+    const answerInput = document.getElementById("answer-input");
+    const answerForm = document.getElementById("answer-form");
+    const feedbackEl = document.getElementById("feedback");
+    const resultEl = document.getElementById("result");
+
+    // Змінні стану
+    let currentLevel = 1;
+    let currentTrial = 1;
+    let currentSequence = [];
+    let correctCount = 0;
+    let gameActive = false;
+
+    function resetGameState() {
+      currentLevel = 1;
+      currentTrial = 1;
+      correctCount = 0;
+      currentSequence = [];
+      gameActive = false;
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+      resultEl.textContent = "";
+      displayEl.textContent = "";
+      answerSection.style.display = "none";
+      hintEl.textContent = "Натисніть «Почати», щоб розпочати гру.";
+      updateProgressText();
+    }
+
+    function updateProgressText() {
+      progressEl.textContent = `Рівень ${currentLevel} із ${LEVELS} • Спроба ${currentTrial} із ${TRIALS_PER_LEVEL}`;
+    }
+
+    function generateSequence() {
+      currentSequence = [];
+      for (let i = 0; i < DIGITS_PER_TRIAL; i++) {
+        currentSequence.push(Math.floor(Math.random() * 10));
+      }
+    }
+
+    function showSequence() {
+      answerSection.style.display = "none";
+      feedbackEl.textContent = "";
+      feedbackEl.className = "feedback";
+      answerInput.value = "";
+      displayEl.textContent = "";
+      hintEl.textContent = "Запам’ятайте послідовність цифр.";
+
+      let index = 0;
+
+      function showNext() {
+        if (!gameActive) return;
+
+        if (index < currentSequence.length) {
+          displayEl.textContent = currentSequence[index];
+          index++;
+          setTimeout(() => {
+            displayEl.textContent = "";
+            setTimeout(showNext, 400); // пауза між цифрами
+          }, 700); // час показу цифри
+        } else {
+          setTimeout(() => {
+            displayEl.textContent = "";
+            showAnswerInput();
+          }, 400);
+        }
+      }
+
+      showNext();
+    }
+
+    function showAnswerInput() {
+      hintEl.textContent = "Введіть ці цифри у зворотному порядку (без пробілів).";
+      answerSection.style.display = "flex";
+      answerInput.focus();
+    }
+
+    function goToNextTrialOrLevel() {
+      if (currentLevel === LEVELS && currentTrial === TRIALS_PER_LEVEL) {
+        finishGame();
+        return;
+      }
+
+      currentTrial++;
+      if (currentTrial > TRIALS_PER_LEVEL) {
+        currentTrial = 1;
+        currentLevel++;
+      }
+
+      updateProgressText();
+      setTimeout(startTrial, 900);
+    }
+
+    function startTrial() {
+      if (!gameActive) return;
+      updateProgressText();
+      generateSequence();
+      showSequence();
+    }
+
+    function startGame() {
+      const name = playerNameInput.value.trim();
+      if (!name) {
+        alert("Будь ласка, введіть своє ім’я перед початком гри.");
+        playerNameInput.focus();
+        return;
+      }
+
+      resetGameState();
+      gameActive = true;
+      restartBtn.style.display = "inline-block";
+      hintEl.textContent = "Запам’ятайте послідовність цифр.";
+      startTrial();
+    }
+
+    function finishGame() {
+      gameActive = false;
+      answerSection.style.display = "none";
+      hintEl.textContent = "Гру завершено.";
+      const total = LEVELS * TRIALS_PER_LEVEL;
+      resultEl.textContent = `Ваш результат: ${correctCount} із ${total} правильних відповідей.`;
+      sendResultToSheet(correctCount, total);
+    }
+
+    // Надсилання результату в Google Apps Script
+    function sendResultToSheet(score, totalTrials) {
+      const name = playerNameInput.value.trim() || "Без імені";
+
+      const payload = {
+        name: name,
+        score: score,
+        totalTrials: totalTrials,
+        timestamp: new Date().toISOString()
+      };
+
+      // 🔵 ВСТАВ СЮДИ URL ТВОГО ВЕБ-ДОДАТКА (Apps Script)
+      const WEB_APP_URL = "ВСТАВ_СЮДИ_URL_ТВОГО_ВЕБ_ДОДАТКА";
+
+      fetch(WEB_APP_URL, {
+        method: "POST",
+        body: new URLSearchParams({
+          data: JSON.stringify(payload)
+        })
+      }).catch((err) => {
+        console.error("Помилка надсилання результату:", err);
+      });
+    }
+
+    // Обробка форми відповіді
+    answerForm.addEventListener("submit", function (e) {
+      e.preventDefault();
+      if (!gameActive) return;
+
+      const raw = answerInput.value.trim();
+      if (raw.length !== DIGITS_PER_TRIAL || !/^\d+$/.test(raw)) {
+        feedbackEl.textContent = `Введіть рівно ${DIGITS_PER_TRIAL} цифри без пробілів.`;
+        feedbackEl.className = "feedback bad";
+        return;
+      }
+
+      const correctReversed = currentSequence.slice().reverse().join("");
+      if (raw === correctReversed) {
+        correctCount++;
+        feedbackEl.textContent = "Правильно! ✅";
+        feedbackEl.className = "feedback ok";
+      } else {
+        feedbackEl.textContent = `Неправильно. Правильна відповідь: ${correctReversed}`;
+        feedbackEl.className = "feedback bad";
+      }
+
+      goToNextTrialOrLevel();
+    });
+
+    startBtn.addEventListener("click", startGame);
+    restartBtn.addEventListener("click", () => {
+      resetGameState();
+      gameActive = true;
+      restartBtn.style.display = "inline-block";
+      startTrial();
+    });
+
+    // Початковий стан
+    resetGameState();
+  </script>
+</body>
+</html>
